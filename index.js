@@ -1,72 +1,69 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState } from 'react';
 import { render } from 'react-dom';
 import Hello from './Hello';
 import './style.css';
 
-// function User({ userId }) {
-//   // 101
-//   const [userId, setUserId] = useState(userId);
-//   const [name, setName] = useState();
-//   const [lastName, setLastName] = useState();
+function Field({ text, children }) {
+  return <div style={{ display: 'flex', marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+    <label>{ text }</label>
+    {children}
+  </div>
+}
 
-//   useEffect(() => {
-//     console.log('Buscar user: userId 101');
-//     // Llamar a firebase o llamen a un recurso
-//     // -> 
-//     const response = get(userId);
-//     // Tardar x tiempo
-//     name = response.name;
+function SuperForm() {
+  const [name, setName] = useState(null);
+  const [lastName, setLastName] = useState(null);
+  const [car, setCar] = useState(null);
 
-//     return () => {
-//       // Cancelar request para usuario 100;
-//     }
-//   }, []);
-
-//   return <p>poli, coder</p>
-// }
-
-
-function App({ start }) {
-  const [clicks, setClicks] = useState(start);
-  const [date, setDate] = useState(null);
-
-  console.log('1. Starting App');
-
-  // Initialize effect - se ejecuta al inicio y al montar
-  useEffect(() => {
-    console.log('3. Componente inicializado');
-    // Llamar a firebase o llamen a un recurso
-  }, []);
-
-  // Change effect - inicio y al cambiar el estado clicks
-  useEffect(() => {
-    console.log('4. Clicked' + clicks);
-    // Sincronizar con la base
-    return () => {
-      // Ejecuta antes de re-renderear
-      console.log('Clicks / date change: ' + clicks);
-    }
-  }, [clicks, date]);
-
-  // Render effect - inicio y al renderear
-   useEffect(() => {
-     console.log('5. Rendering')
-
-     return () => {
-            console.log('Clean render hook')
-     }
-   })
-
-  console.log('2. Will render');
-
-  function addClick() {
-    setClicks(clicks + 1);
-    setDate(new Date().toISOString());
+  const [sent, setSent] = useState(false); 
+  // Guardar el estado y solicitar un nuevo render
+  
+  function onNameChange(event) {
+    setName(event.target.value)
   }
+  function onLastNameChange(event) {
+    setLastName(event.target.value);
+  }
+  function onCarChange(event) {
+    setCar(event.target.value);
+  }
+
+  function send() {
+    setSent(true);
+  }
+
   return <>
-  <button onClick={addClick}>Clickme!</button>
-  {clicks} Ultimo click: {date}
+    <p>Formulario de ingreso</p>
+
+    <Field text="Nombre">
+       <input type="text" value={name} onInput={onNameChange} />
+    </Field>
+
+    <Field text="Apellido">
+      <input type="text" onInput={onLastNameChange} />
+    </Field>
+
+   <Field text="Auto">
+      <select style={{ width: 150 }} onInput={onCarChange}>
+        <option value="" >Elige tu auto</option>
+        <option value="mercedes" >Mercedes</option>
+        <option value="audi">Audi</option>
+        <option value="bmw">Bmw</option>
+        <option value="fitito">Fitito</option>
+      </select>
+    </Field>
+
+    <button type="button" 
+    disabled={!car || !lastName || !name || sent}
+    onClick={send}>
+      Enviar!
+    </button>
+    <p>{name}, {lastName}, {car}</p>
   </>
 }
 
-render(<App start={2} />, document.getElementById('root'));
+function App() {
+  return <SuperForm />
+}
+
+render(<App />, document.getElementById('root'));
